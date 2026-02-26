@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SLEDAI-2K Calculator</title>
+
+<style>
+body {
+  background-color: #87CEEB;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 40px 0;
+}
+
+.container {
+  background-color: #fffde7;
+  width: 850px;
+  max-width: 95%;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  margin: 0 auto;
+}
+
+.title {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 30px auto;        /* shrink to content width */
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  text-align: center;
+  color: #3366cc;
+  border: 2px solid #3366cc;
+  border-radius: 8px;
+  background-color: #e6f0ff;
+  padding: 15px 25px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.logo {
+  max-width: 60px;
+  height: auto;
+}
+
+.inner {
+  max-width: 700px;
+  margin: 0 auto;
+  padding-left: 200px;
+  padding-right: 20px;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.result {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.badge {
+  padding: 10px 15px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.remission { background-color: #4CAF50; color: white; }
+.mild { background-color: #8BC34A; color: white; }
+.moderate { background-color: #FFC107; color: black; }
+.high { background-color: #FF9800; color: white; }
+.veryhigh { background-color: #F44336; color: white; }
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 10px;
+  background-color: #3366cc;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+.reference {
+  font-size: 12px;
+  margin-top: 40px;
+  color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2 class="title">
+    <img src="LogOM5.png" alt="Logo" class="logo">
+    SLEDAI-2K Calculator
+  </h2>
+
+  <div class="inner">
+
+    <div class="section">
+      <strong>Clinical Conditions (last 10 days)</strong><br><br>
+
+      <!-- 8 points -->
+      <label><input type="checkbox" value="8" class="sledai"> Convulsions of recent onset, excluding other causes (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Psychosis of non-pharmacologic cause (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Organic brain syndrome (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Visual disorder attributable to lupus (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Recent-onset cranial nerve disorder (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Headache attributable to lupus (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Recent onset stroke (+8)</label><br>
+      <label><input type="checkbox" value="8" class="sledai"> Vasculitis  attributable to lupus (+8)</label><br>
+
+      <!-- 4 points -->
+      <label><input type="checkbox" value="4" class="sledai"> Arthritis (> 2 joints) (+4)</label><br>
+      <label><input type="checkbox" value="4" class="sledai"> Myositis (+4)</label><br>
+      <label><input type="checkbox" value="4" class="sledai"> Hematuria (+4)</label><br>
+      <label><input type="checkbox" value="4" class="sledai"> Proteinúria > 0.5g/day, of recent onset or higher than usual (+4)</label><br>
+      <label><input type="checkbox" value="4" class="sledai"> Hematic or granular urinary casts (+4)</label><br>
+
+      <!-- 2 points -->
+      <label><input type="checkbox" value="2" class="sledai"> Rash of recent onset (+2)</label><br>
+      <label><input type="checkbox" value="2" class="sledai"> Alopècia of recent onset, or recurrent (+2)</label><br>
+      <label><input type="checkbox" value="2" class="sledai"> Oral or nasal ulcers (+2)</label><br>
+      <label><input type="checkbox" value="2" class="sledai"> Pleuritis (+2)</label><br>
+      <label><input type="checkbox" value="2" class="sledai"> Pericarditis (+2)</label><br>
+      <label><input type="checkbox" value="2" class="sledai"> Low C3, C4, or CH50 (+2)</label><br>
+      <label><input type="checkbox" value="2" class="sledai"> High anti-dsDNA titers (+2)</label><br>
+
+      <!-- 1 point -->
+      <label><input type="checkbox" value="1" class="sledai"> Fever > 38ºC without infection () (+1)</label><br>
+      <label><input type="checkbox" value="1" class="sledai"> Thrombocytopenia < 100.000/mm3 (+1)</label><br>
+      <label><input type="checkbox" value="1" class="sledai"> Leucopenia < 3000/mm3 (+1)</label><br>
+    </div>
+
+    <button onclick="calculate()">Calculate SLEDAI-2K</button>
+    <button onclick="resetForm()">Reset</button>
+
+    <div class="result" id="result"></div>
+    <div id="activityClass"></div>
+
+    <div class="reference">
+      Gladman DD et al. The SLEDAI-2K. J Rheumatol. 2002.
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+function calculate() {
+
+  let score = 0;
+
+  let boxes = document.querySelectorAll(".sledai:checked");
+  boxes.forEach(box => score += parseInt(box.value));
+
+  document.getElementById("result").innerHTML = "SLEDAI-2K Score: " + score;
+
+  let activity = "";
+  let style = "";
+
+  if (score === 0) {
+    activity = "Remission";
+    style = "remission";
+  } else if (score <= 5) {
+    activity = "Low Activity";
+    style = "mild";
+  } else if (score <= 10) {
+    activity = "Moderate Activity";
+    style = "moderate";
+  } else if (score <= 19) {
+    activity = "High Activity";
+    style = "high";
+  } else {
+    activity = "Very High Activity";
+    style = "veryhigh";
+  }
+
+  document.getElementById("activityClass").innerHTML =
+    "<div class='badge " + style + "'>" + activity + "</div>";
+}
+
+function resetForm() {
+  document.querySelectorAll("input[type='checkbox']").forEach(box => box.checked = false);
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("activityClass").innerHTML = "";
+}
+
+</script>
+
+</body>
+</html>
